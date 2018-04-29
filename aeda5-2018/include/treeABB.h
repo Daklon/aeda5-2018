@@ -3,6 +3,8 @@
 
 #include "DNI.h"
 #include "nodeBB.h"
+#include <vector>
+#include <string>
 
 template<typename Clave>
 class Treeabb
@@ -144,7 +146,9 @@ public:
     }
 
     void print(){
+        //recorrer el arbol y ir guardandolo todo en la matriz output
 
+        //pintar la matriz output por pantalla
     }
 
     int GetComparisons(){
@@ -154,6 +158,7 @@ public:
         this->numOfComparisons=0;
     }
 private:
+    std::vector<std::string> output;
     NodeBB<Clave> *head;
     NodeBB<Clave> *temp_head;
     NodeBB<Clave> *temp_data;

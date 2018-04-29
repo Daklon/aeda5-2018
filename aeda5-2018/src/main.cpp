@@ -22,6 +22,8 @@ void SelectMode(){
 
 int main()
 {
+    SelectMode();
+
     if(mode == 0){
         //demo
     } else if(mode==1){
@@ -29,13 +31,13 @@ int main()
         AskData();
         //creamos el banco de pruebas
         vector<DNI> testbench;
-        for(int i=0;i<2*N;i++){
+        for(int i=0;i<2*tamArbol;i++){
             DNI aleat;
             testbench.push_back(aleat);
         }
         //creamos el arbol y insertamos la mitad de elementos del banco de pruebas
         Treeabb<DNI> arbol;
-        for(int i=0;i<N;i++){
+        for(int i=0;i<tamArbol;i++){
             arbol.Insertar(testbench.at(i));
         }
 
