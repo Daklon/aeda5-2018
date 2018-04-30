@@ -110,16 +110,17 @@ public:
             if(this->temp_head->GetFather()->GetRightChildren() == this->temp_head){
                 //compruebo si el nodo a borrar es el derecho de su padre y lo borro
                 this->temp_head->GetFather()->SetRightChildren(nullptr);
+                this->numOfElements--;
                 delete this->temp_head;
             } else {
                 //si no, el nodo a borrar es el izquierdo de su padre, lo borro
                 this->temp_head->GetFather()->SetLeftChildren(nullptr);
+                this->numOfElements--;
                 delete this->temp_head;
-                this->numOfElements;
             }
             //si el nodo tiene dos hijos
         } else if(this->temp_head->GetLeftChildren() != nullptr && this->temp_head->GetRightChildren() != nullptr){
-
+            //ESTO FALTA POR ACABAR!!!!!!
 
             //si el nodo tiene un solo hijo
         } else {
@@ -130,8 +131,8 @@ public:
                 } else {
                     this->temp_head->GetFather()->SetRightChildren(this->temp_head->GetLeftChildren());
                 }
-                delete this->temp_head;
                 this->numOfElements--;
+                delete this->temp_head;
             } else {
                 //si no, el nodo a borrar es el izquierdo de su padre, lo borro
                 if(temp_head->GetRightChildren() != nullptr){
@@ -139,17 +140,22 @@ public:
                 } else {
                     this->temp_head->GetFather()->SetLeftChildren(this->temp_head->GetLeftChildren());
                 }
-                delete this->temp_head;
                 this->numOfElements--;
+                delete this->temp_head;
             }
         }
     }
 
     void print(){
         //recorrer el arbol y ir guardandolo todo en la matriz output
-
+        this->recorrido(this->head,0);
         //pintar la matriz output por pantalla
+        for(int i=0;i<this->output.size();i++){
+            std::cout << this->output.at(i) << std::endl;
+        }
+        this->output.clear();
     }
+
 
     int GetComparisons(){
         return this->numOfComparisons;
@@ -157,6 +163,38 @@ public:
     void ResetStatistics(){
         this->numOfComparisons=0;
     }
+
+private:
+
+    //recorremos recursivamente, primero por la mitad izquierda, guardando en un buffer el arbol
+    void recorrido(NodeBB<Clave> *head,int depth){
+        std::string data;
+        if(head != nullptr){
+
+            data = "[" + to_string(head->GetClave()) + ']';
+
+            if(depth < this->output.size()){
+                this->output.at(depth) += data;
+            } else {
+                this->output.push_back("Nivel ");
+                this->output.at(depth) += std::to_string(depth) + ": " + data;
+            }
+
+            this->recorrido(head->GetLeftChildren(),depth+1);
+            this->recorrido(head->GetRightChildren(),depth+1);
+        } else {
+
+            data = "[.]";
+
+            if(depth < this->output.size()){
+                this->output.at(depth) += data;
+            } else {
+                this->output.push_back("Nivel ");
+                this->output.at(depth) += std::to_string(depth) + ": " +data;
+            }
+        }
+    }
+
 private:
     std::vector<std::string> output;
     NodeBB<Clave> *head;

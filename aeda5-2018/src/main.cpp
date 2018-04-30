@@ -60,12 +60,37 @@ void CheckStatistics(int numOfComparisons, int fase){
     }
 }
 
+void DemoMode(){
+    int input,value;
+    bool run = true;
+    Treeabb<int> arbol;
+    while(run){
+        cout << endl << "[0] Salir" << endl;
+        cout << "[1] Insertar Clave" << endl;
+        cout << "[2] Eliminar Clave" << endl;
+        cin >> input;
+        if(input == 0){
+            run = false;
+        } else if(input == 1){
+            cout << "Introduzca el valor de la clave a insertar:";
+            cin >> value;
+            arbol.Insertar(value);
+            arbol.print();
+        } else if(input == 2){
+            cout << "Introduzca el valor de la clave a eliminar:";
+            cin >> value;
+            arbol.Eliminar(value);
+            arbol.print();
+        }
+    }
+}
+
 int main()
 {
     SelectMode();
 
     if(mode == 0){
-        //demo
+        DemoMode();
     } else if(mode==1){
         //estadistica
         AskData();
@@ -130,6 +155,7 @@ int main()
         arbol.Insertar(4);
         arbol.Insertar(7);
         arbol.Insertar(13);
+        arbol.print();
     } else {
         cout << "Modo incorrecto";
         return 0;
