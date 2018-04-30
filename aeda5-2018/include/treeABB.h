@@ -103,45 +103,31 @@ public:
     }
 
     void Eliminar(Clave x){
-        bool itera=true;
         this->temp_head = this->Buscar(x);
-        //si el nodo no tiene hijos
-        if(this->temp_head->GetLeftChildren() == nullptr && this->temp_head->GetRightChildren() == nullptr){
-            if(this->temp_head->GetFather()->GetRightChildren() == this->temp_head){
-                //compruebo si el nodo a borrar es el derecho de su padre y lo borro
-                this->temp_head->GetFather()->SetRightChildren(nullptr);
-                this->numOfElements--;
-                delete this->temp_head;
-            } else {
-                //si no, el nodo a borrar es el izquierdo de su padre, lo borro
-                this->temp_head->GetFather()->SetLeftChildren(nullptr);
-                this->numOfElements--;
-                delete this->temp_head;
-            }
-            //si el nodo tiene dos hijos
-        } else if(this->temp_head->GetLeftChildren() != nullptr && this->temp_head->GetRightChildren() != nullptr){
-            //ESTO FALTA POR ACABAR!!!!!!
 
-            //si el nodo tiene un solo hijo
-        } else {
-            if(this->temp_head->GetFather()->GetRightChildren() == this->temp_head){
-                //compruebo si el nodo a borrar es el derecho de su padre y lo borro
-                if(temp_head->GetRightChildren() != nullptr){
-                    this->temp_head->GetFather()->SetRightChildren(this->temp_head->GetRightChildren());
-                } else {
-                    this->temp_head->GetFather()->SetRightChildren(this->temp_head->GetLeftChildren());
-                }
-                this->numOfElements--;
-                delete this->temp_head;
+        if(this->temp_head->GetLeftChildren() == nullptr && this->temp_head->GetRightChildren() == nullptr){
+            //si el nodo no tiene hijos
+            if(this->temp_head == this->head){
+                this->head = this->DeleteNodeWithoutChildren(this->temp_head);
+
             } else {
-                //si no, el nodo a borrar es el izquierdo de su padre, lo borro
-                if(temp_head->GetRightChildren() != nullptr){
-                    this->temp_head->GetFather()->SetLeftChildren(this->temp_head->GetRightChildren());
-                } else {
-                    this->temp_head->GetFather()->SetLeftChildren(this->temp_head->GetLeftChildren());
-                }
-                this->numOfElements--;
-                delete this->temp_head;
+                this->DeleteNodeWithoutChildren(this->temp_head);
+            }
+
+        } else if(this->temp_head->GetLeftChildren() != nullptr && this->temp_head->GetRightChildren() != nullptr){
+            //si el nodo tiene dos hijos
+            if(this->temp_head == this->head){
+                this->head = this->DeleteNodeWithTwoChildren(this->temp_head);
+            } else {
+                this->DeleteNodeWithTwoChildren(this->temp_head);
+            }
+
+        } else {
+            //si el nodo tiene un solo hijo
+            if(this->temp_head == this->head){
+                this->head = this->DeleteNodeWithOneChildren(this->temp_head);
+            } else {
+                this->DeleteNodeWithOneChildren(this->temp_head);
             }
         }
     }
@@ -195,6 +181,106 @@ private:
         }
     }
 
+    //obtenemos el menor nodo de un subarbol dado
+    NodeBB<Clave>* GetSmallestNode(NodeBB<Clave> *head){
+        bool itera = true;
+        while(itera){
+            if(head->GetLeftChildren() == nullptr){
+                itera = false;
+            } else {
+                head = head->GetLeftChildren();
+            }
+        }
+        return head;
+    }
+
+    //obtenemos el mayor nodo de un subarbol dado
+    NodeBB<Clave>* GetBigestNode(NodeBB<Clave> *head){
+        bool itera = true;
+        while(itera){
+            if(head->GetRightChildren() == nullptr){
+                itera = false;
+            } else {
+                head = head->GetRightChildren();
+            }
+        }
+        return head;
+    }
+
+    NodeBB<Clave>* DeleteNodeWithoutChildren(NodeBB<Clave> *head){
+        if(head->GetFather() != nullptr){
+            if(head->GetFather()->GetRightChildren() == head){
+                //compruebo si el nodo a borrar es el derecho de su padre y lo borro
+                head->GetFather()->SetRightChildren(nullptr);
+            } else {
+                //si no, el nodo a borrar es el izquierdo de su padre, lo borro
+                head->GetFather()->SetLeftChildren(nullptr);
+            }
+        }
+        this->numOfElements--;
+        delete head;
+
+        return nullptr;
+    }
+
+    NodeBB<Clave>* DeleteNodeWithOneChildren(NodeBB<Clave> *head){
+        NodeBB<Clave> *temp_head_ptr;
+        if(head->GetFather() != nullptr){
+            if(head->GetFather()->GetRightChildren() == head){
+                //compruebo si el nodo a borrar es el derecho de su padre y reemplazo punteros
+                if(head->GetRightChildren() != nullptr){
+                    head->GetFather()->SetRightChildren(head->GetRightChildren());
+                } else {
+                    head->GetFather()->SetRightChildren(head->GetLeftChildren());
+                }
+            } else {
+                //si no, el nodo a borrar es el izquierdo de su padre, reemplazo punteros
+                if(head->GetRightChildren() != nullptr){
+                    head->GetFather()->SetLeftChildren(head->GetRightChildren());
+                } else {
+                    head->GetFather()->SetLeftChildren(head->GetLeftChildren());
+                }
+            }
+        } else {
+            if(head->GetRightChildren() != nullptr){
+                temp_head_ptr = head->GetRightChildren();
+
+            } else {
+                temp_head_ptr = head->GetLeftChildren();
+            }
+            temp_head_ptr->SetFather(nullptr);
+        }
+        this->numOfElements--;
+        delete head;
+        return temp_head_ptr;
+    }
+
+    NodeBB<Clave>* DeleteNodeWithTwoChildren(NodeBB<Clave> *head){
+        Clave temp_key;
+        int temp_numOfCopies;
+        NodeBB<Clave> *temp_key_ptr;
+        if(this->deleteside){
+            temp_key_ptr = this->GetBigestNode(head->GetLeftChildren());
+            this->deleteside = false;
+        } else {
+            temp_key_ptr = this->GetSmallestNode(head->GetRightChildren());
+            this->deleteside = true;
+        }
+
+        //guardamos el valor del nodo elegido
+        temp_key = temp_key_ptr->GetClave();
+        //y el numero de copias
+        temp_numOfCopies = temp_key_ptr->GetNumOfCopies();
+        //eliminamos el nodo elegido(lo vamos a mover a la raiz)
+        this->Eliminar(temp_key);
+        //establecemos el valor del nodo a eliminar al nodo elegido para sustituirlo
+        head->SetClave(temp_key);
+        //y su número de copias
+        head->SetNumOfCopies(temp_numOfCopies);
+        //devolvemos head, por ahora no es necesario ya que el puntero no cambia, solo su valor
+        return head;
+    }
+
 private:
     std::vector<std::string> output;
     NodeBB<Clave> *head;
@@ -202,6 +288,7 @@ private:
     NodeBB<Clave> *temp_data;
     int numOfElements;
     int numOfComparisons;
+    bool deleteside = false;
 };
 
 

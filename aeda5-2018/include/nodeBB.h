@@ -43,6 +43,10 @@ public:
         return this->data;
     }
 
+    void SetClave(Clave data){
+        this->data = data;
+    }
+
     void IncreaseCounter(){
         this->numOfCopies++;
     }
@@ -53,6 +57,10 @@ public:
 
     int GetNumOfCopies(){
         return this->numOfCopies;
+    }
+
+    void SetNumOfCopies(int numOfCopies){
+        this->numOfCopies = numOfCopies;
     }
 
 private:
